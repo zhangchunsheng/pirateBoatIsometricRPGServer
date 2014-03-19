@@ -1,0 +1,10 @@
+{
+  "name": "btg",
+  "description": "btg",
+  "version": "1.0.0",
+  "author": {
+    "name": "Peter Zhang",
+    "email": "zhangchunsheng423@gmail.com"
+  },
+  "main": "./btg.js"
+}

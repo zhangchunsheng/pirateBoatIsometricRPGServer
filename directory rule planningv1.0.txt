@@ -1,0 +1,20 @@
+/**
+ * 目录规则规划
+ * 作者：张春生
+ * 日期：2013-02-04
+ */
+docs--项目所有文档
+	design--设计文件
+		db--数据库设计
+		uml--uml设计图
+	prototype--产品原型/demo
+		rpg--rpg版本的原型
+
+node
+	server.js--程序入口(控制层)
+	config.js--配置文件
+	b(business)--业务层
+	s(services)--服务层
+		uc--用户中心
+	c(common)--通用方法
+	test--测试

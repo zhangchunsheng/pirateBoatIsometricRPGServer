@@ -1,0 +1,19 @@
+{
+  "name": "seaking_server",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "*",
+    "stylus": "*",
+    "nib": "*",
+    "socket.io": "*",
+    "mongoskin": "*",
+    "mysql": "*",
+    "redis": "*",
+    "hiredis": "*",
+    "MD5": "*"
+  }
+}

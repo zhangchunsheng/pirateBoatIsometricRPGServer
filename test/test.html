@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>test</title>
+		<script type="text/javascript" src="md5.js"></script>
+		<script type="text/javascript" src="http://project.wozlla.com:7001/socket.io/socket.io.js"></script>
+		<style type="text/css">
+			body {
+				background: #000000;
+				color: #ffffff;
+			}
+			div {
+				margin: 10px;
+				background: gray;
+				text-align: center;
+				padding: 10px;
+			}
+			span {
+				width: 700px;
+			}
+			#content {
+				text-align: left;
+				width: 800px;
+				height: 600px;
+			}
+			#serverList {
+				position: absolute;
+				top: 600px;
+				left: 860px;
+				width: 200px;
+				height: 600px;
+			}
+			#serverList div {
+				background: green;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="connect">連接服務器</div>
+		<label>登錄名</label><input id="loginName" type="text" />
+		<label>密碼</label><input id="password" type="password" />
+		<div id="register">註冊</div>
+		<div id="login">登錄</div>
+		<div id="loginBySessionId">保持登錄</div>
+		<div id="createRole">創建角色</div>
+		<div id="getRoleInfo">获得角色信息</div>
+		<div id="getTaskInfo">获得任务信息</div>
+		<div id="getCurrentTaskInfo">获得当前任务信息</div>
+		<div id="getUserInduInfo">获得玩家副本信息</div>
+		<div id="getUserPackageInfo">获得玩家背包信息</div>
+		<div id="talkToWorld">聊天(世界)</div>
+		<div id="content"></div>
+		<div id="serverList"></div>
+		<script type="text/javascript">
+			var socket = io.connect("http://project.wozlla.com:7001");
+			var uc_socket = io.connect("http://project.wozlla.com:7002");
+			var game_socket = null;
+			socket.on("connect", function() {
+				console.log("socket connect");
+			});
+			socket.on("serverList", function(serverList) {
+				var element = createElement("span", JSON.stringify(serverList));
+				$("#content").appendChild(element);
+				$("#serverList").innerHTML = "";
+				var server = null;
+				for(var i = 0 ; i < serverList.length ; i++) {
+					element = createElement("div", serverList[i].showName);
+					(function(server) {
+						element.addEventListener("click", function(e) {
+							console.log(e);
+							createServer(server);
+						});
+					})(serverList[i]);
+					$("#serverList").appendChild(element);
+				}
+			});
+			uc_socket.on("connect", function() {
+				console.log("uc_socket connect");
+			});
+			uc_socket.on("1002", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+				if(result.status == "200") {
+					localStorage.setItem("registerType", result.registerType);
+					localStorage.setItem("loginName", result.loginName);
+					localStorage.setItem("userId", result.userId);
+					localStorage.setItem("sessionId", result.sessionId);
+				}
+			});
+			uc_socket.on("1004", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+				if(result.status == "200") {
+					localStorage.setItem("registerType", result.registerType);
+					localStorage.setItem("loginName", result.loginName);
+					localStorage.setItem("userId", result.userId);
+					localStorage.setItem("sessionId", result.sessionId);
+				}
+			});
+			uc_socket.on("1006", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+				if(result.status == "200") {
+					localStorage.setItem("registerType", result.registerType);
+					localStorage.setItem("loginName", result.loginName);
+					localStorage.setItem("userId", result.userId);
+					localStorage.setItem("sessionId", result.sessionId);
+				}
+			});
+			uc_socket.on("1602", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+			});
+			uc_socket.on("1008", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+			});
+			uc_socket.on("1010", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+			});
+			uc_socket.on("1302", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+			});
+			/**
+			 * 获得玩家副本数据
+			 */
+			uc_socket.on("1102", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+			});
+			/**
+			 * 获得玩家背包数据
+			 */
+			uc_socket.on("1012", function(result) {
+				console.log(result);
+				var element = createElement("span", JSON.stringify(result));
+				$("#content").appendChild(element);
+			});
+			function $(id) {
+				return document.querySelector(id);
+			}
+			function createElement(tag, content) {
+				var element = document.createElement(tag);
+				element.innerHTML = content + "<br />";
+				return element;
+			}
+			function addContent(content) {
+				var element = createElement("span", content);
+				$("#content").appendChild(element);
+			}
+			function createServer(server) {
+				addContent("連接" + server.showName);
+				game_socket = io.connect("http://" + server.ip + ":" + server.port);
+				game_socket.on("connect", function() {
+					console.log("game_socket connect");
+				});
+			}
+			$("#connect").addEventListener("click", function() {
+				socket.emit("getServerList");
+			});
+			$("#register").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = $("#loginName").value;
+				var password = $("#password").value;
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					password: hex_md5(password)
+				};
+				console.log(data);
+				uc_socket.emit("1001", data);
+			});
+			$("#login").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = $("#loginName").value;
+				var password = $("#password").value;
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					password: hex_md5(password)
+				};
+				console.log(data);
+				uc_socket.emit("1003", data);
+			});
+			$("#loginBySessionId").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//6D7BA5D02E6DCC6A104567A2013EA3DA 1D74C6CE3A8DB50E6B4A2410E6E37D19 29197A14BA49DDFCDA3C48559E413ADF
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId
+				};
+				console.log(data);
+				uc_socket.emit("1005", data);
+			});
+			$("#talkToWorld").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				//loginName: "google"
+				//message: "註冊成功"
+				//registerType: 1
+				//sessionId: "537477B9100B5FC116558D67312E41C4"
+				//status: "200"
+				//userId: "100007"
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var message = "hello world!";
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					message: message,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1601", data);
+			});
+			$("#createRole").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var characterId = 1;
+				var sex = 1;
+				var nickName = "";
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					characterId: characterId,
+					sex: sex,
+					nickName: nickName,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1007", data);
+			});
+			$("#getRoleInfo").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1009", data);
+			});
+			$("#getTaskInfo").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var type = 1;
+				var taskId = 10101;
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					type: type,
+					taskId: taskId,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1301", data);
+			});
+			$("#getCurrentTaskInfo").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var type = 2;
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					type: type,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1301", data);
+			});
+			/**
+			 * 获得玩家副本数据
+			 */
+			$("#getUserInduInfo").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var induId = 10101;
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					induId: induId,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1101", data);
+			});
+			/**
+			 * 获得玩家背包数据
+			 */
+			$("#getUserPackageInfo").addEventListener("click", function() {
+				if(uc_socket == null) {
+					addContent("沒有初始化連接");
+				}
+				var registerType = 1;
+				var loginName = "wozlla";
+				var userId = 100001;
+				var sessionId = "29197A14BA49DDFCDA3C48559E413ADF";//1D74C6CE3A8DB50E6B4A2410E6E37D19
+				var serverId = 1;
+				var induId = 10101;
+				var lang = "zh_CN";
+				var data = {
+					registerType: registerType,
+					loginName: loginName,
+					userId: userId,
+					sessionId: sessionId,
+					serverId: serverId,
+					lang: lang
+				};
+				console.log(data);
+				uc_socket.emit("1011", data);
+			});
+		</script>
+	</body>
+</html>
