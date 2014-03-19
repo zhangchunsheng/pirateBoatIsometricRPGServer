@@ -17,7 +17,7 @@ var btg = {
 };
 
 (function(btg) {
-	btg.initUcUser = function(mongodb, mysql) {
+	btg.initUcUser = function(mongodb, mysql, redis) {
 		mongodb.collection("uc_user").remove({}, function(err, reply) {
 			console.log(reply);
 		});

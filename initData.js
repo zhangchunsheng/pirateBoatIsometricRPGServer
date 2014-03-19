@@ -45,7 +45,7 @@ server.listen(9000);
 function init() {
 	btg.initServerList(mongodb, mysql, redis);
 	//btg.initUserId(redis);
-	btg.initUcUser(mongodb, mysql);
+	btg.initUcUser(mongodb, mysql, redis);
 	btg.initTaskList(mongodb, mysql, redis);
 	btg.initInduList(mongodb, mysql, redis);
 	btg.initUserPackage(mongodb, mysql, redis);
