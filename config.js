@@ -14,8 +14,8 @@ exports.mongodb = mongoskin.db('localhost:27017?auto_reconnect=true', {
 var mysql = require('mysql');
 exports.mysql = mysql.createConnection({
 	host     : 'localhost',
-	user     : 'root',
-	password : 'html5isgood',
+	user     : 'seaking',
+	password : 'seaking',
 	database: "seaking"
 });
 
