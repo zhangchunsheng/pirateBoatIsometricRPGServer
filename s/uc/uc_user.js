@@ -88,7 +88,7 @@ var uc_user = {
 			socket.emit("1002", result);
 			return;
 		}
-		var validInfo = uc_user.validLoginName(data);
+		/*var validInfo = uc_user.validLoginName(data);
 		if(validInfo.validNum < 1) {
 			var result = {
 				status: "100",
@@ -96,7 +96,7 @@ var uc_user = {
 			};
 			socket.emit("1002", result);
 			return;
-		}
+		}*/
 		if(data.password == null || data.password == "") {
 			var result = {
 				status: "100",
@@ -163,7 +163,7 @@ var uc_user = {
 			socket.emit("1004", result);
 			return;
 		}
-		var validInfo = uc_user.validLoginName(data);
+		/*var validInfo = uc_user.validLoginName(data);
 		if(validInfo.validNum < 1) {
 			var result = {
 				status: "100",
@@ -171,7 +171,7 @@ var uc_user = {
 			};
 			socket.emit("1004", result);
 			return;
-		}
+		}*/
 		if(data.password == null || data.password == "") {
 			var result = {
 				status: "100",
